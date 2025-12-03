@@ -4,10 +4,19 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { createOrder, getCart, checkAuth, cancelOrder } from "../../services/api"; // Assuming cancelOrder is available
+import { createOrder, getCart, checkAuth, cancelOrder } from "../../services/api";
 import { useToast } from "../../components/Toast";
 
-const paymentMethods = [
+type PaymentMethod = {
+  id: number;
+  name: string;
+  img: string;
+  qr?: string;
+  number?: string;
+  accountName?: string;
+}
+
+const paymentMethods: PaymentMethod[] = [
     {id: 0, name: 'Cash payment', img: '/payment-method/payment-method.png'},
     {id: 1, name: 'gcash', img: '/payment-method/gcash.png', qr: '/gcash-qr.jpg', number: '09563975208', accountName: 'John Doe'},
     {id: 2, name: 'paymaya', img: '/payment-method/maya.png', qr: '/maya-qr.png', number: '09876543213', accountName: 'Jane Smith'}
@@ -35,10 +44,9 @@ export default function CheckoutPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
-  const [cancelTimeLeft, setCancelTimeLeft] = useState(60); // 1 minute in seconds
+  const [cancelTimeLeft, setCancelTimeLeft] = useState(60);
 
   useEffect(() => {
-    // Set default pickup time to current time + 10 minutes
     const now = new Date();
     now.setMinutes(now.getMinutes() + 10);
     setPickupTime(now.toISOString().slice(0, 16));
@@ -53,7 +61,6 @@ export default function CheckoutPage() {
         setCancelTimeLeft((prev) => prev - 1);
       }, 1000);
     } else if (cancelTimeLeft === 0) {
-      // Auto-redirect after 1 minute
       setTimeout(() => {
         router.push('/');
       }, 1000);
@@ -62,28 +69,29 @@ export default function CheckoutPage() {
   }, [orderPlaced, cancelTimeLeft, router]);
 
   const checkAuthAndLoadCheckout = async () => {
-  try {
-    setLoading(true);
-    
-    console.log('🔍 Starting checkout auth check...');
-    const authData = await checkAuth();
-    console.log('✅ Auth response:', authData);
-    
-    if (authData && authData.authenticated === true) {
-      console.log('✅ User authenticated:', authData.user);
-      setIsAuthenticated(true);
-      await loadCheckoutItems();
-    } else {
-      console.log('❌ User not authenticated');
+    try {
+      setLoading(true);
+      
+      console.log('🔍 Starting checkout auth check...');
+      const authData = await checkAuth();
+      console.log('✅ Auth response:', authData);
+      
+      if (authData && authData.authenticated === true) {
+        console.log('✅ User authenticated:', authData.user);
+        setIsAuthenticated(true);
+        await loadCheckoutItems();
+      } else {
+        console.log('❌ User not authenticated');
+        setIsAuthenticated(false);
+      }
+    } catch (error) {
+      console.error('❌ Checkout auth check error:', error);
       setIsAuthenticated(false);
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error('❌ Checkout auth check error:', error);
-    setIsAuthenticated(false);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
+
   const loadCheckoutItems = async () => {
     try {
       const storedItemIds = sessionStorage.getItem('checkout_item_ids');
@@ -108,7 +116,7 @@ export default function CheckoutPage() {
   
   const total = selectedItems.reduce((sum, item) => sum + parseFloat(item.subtotal), 0);
 
-  const handleConfirmOrder = async () => {
+  const handleConfirmOrder = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!selectedPayment) {
       showToast("Please select a payment method", "red");
       return;
@@ -156,7 +164,7 @@ export default function CheckoutPage() {
     }
   };
 
-  const handleCancelOrder = async () => {
+  const handleCancelOrder = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!orderId) return;
 
     try {
@@ -174,7 +182,7 @@ export default function CheckoutPage() {
     }
   };
 
-  const handleCancel = () => {
+  const handleCancel = async (e: React.ChangeEvent<HTMLInputElement>) => {
     router.push('/mycart');
   };
 
@@ -191,7 +199,6 @@ export default function CheckoutPage() {
     );
   }
 
-  // Show login prompt if not authenticated
   if (!isAuthenticated) {
     return (
       <main className="min-h-screen p-6">
@@ -298,17 +305,6 @@ export default function CheckoutPage() {
                       <Image src={item.img} alt={item.name} width={40} height={30} className="object-contain" />
                       <h3 className={selectedPayment === item.name ? 'text-red-600 font-semibold' : ''}>{item.name}</h3>
                     </button>
-                    {selectedPayment === item.name && (item.name === 'gcash' || item.name === 'paymaya') && (
-                      <div className="mt-3 p-3 border border-red-200 rounded-lg bg-red-50">
-                        <div className="flex flex-col items-center gap-3">
-                          <Image src={item.qr} alt={`${item.name} QR Code`} width={150} height={150} className="object-contain" />
-                          <div className="text-center">
-                            <p className="font-semibold">Account Number: {item.number}</p>
-                            <p className="text-gray-600">Account Name: {item.accountName}</p>
-                          </div>
-                        </div>
-                      </div>
-                    )}
                   </div>
                 ))}
               </div>
