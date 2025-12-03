@@ -11,6 +11,7 @@
     "deploy": "next build && gh-pages -d out -t"
   },
   "dependencies": {
+    "@uploadcare/react-uploader": "^1.11.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.24",
     "lucide-react": "^0.554.0",
