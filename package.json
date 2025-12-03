@@ -1,9 +1,28 @@
 {
-  "devDependencies": {
-    "gh-pages": "^6.3.0"
+  "name": "clicktoeat-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
+    "next": "16.0.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "@uploadcare/react-uploader": "^1.11.1",
     "@uploadcare/file-uploader": "^1.24.5",
-    "@uploadcare/react-uploader": "^1.11.1"
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.0.0",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "16.0.1",
+    "gh-pages": "^6.3.0"
   }
 }
