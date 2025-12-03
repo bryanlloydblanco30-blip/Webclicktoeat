@@ -19,7 +19,7 @@ export default function SignupPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
@@ -27,7 +27,7 @@ export default function SignupPage() {
     setError('');
   };
 
-  const validateForm = () => {
+  const validateForm = async () => {
     if (!formData.username || !formData.email || !formData.password || !formData.full_name || !formData.sr_code) {
       setError('All fields are required');
       return false;
@@ -52,7 +52,7 @@ export default function SignupPage() {
     return true;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
 

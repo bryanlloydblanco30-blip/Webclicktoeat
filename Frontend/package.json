@@ -11,7 +11,9 @@
     "deploy": "next build && gh-pages -d out -t"
   },
   "dependencies": {
+    "@radix-ui/react-slot": "^1.2.4",
     "@uploadcare/react-uploader": "^1.11.1",
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.24",
     "lucide-react": "^0.554.0",

@@ -116,7 +116,7 @@ export default function CheckoutPage() {
   
   const total = selectedItems.reduce((sum, item) => sum + parseFloat(item.subtotal), 0);
 
-  const handleConfirmOrder = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleConfirmOrder = async () => {
     if (!selectedPayment) {
       showToast("Please select a payment method", "red");
       return;
@@ -164,7 +164,7 @@ export default function CheckoutPage() {
     }
   };
 
-  const handleCancelOrder = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCancelOrder = async (): Promise<void> => {
     if (!orderId) return;
 
     try {
@@ -182,7 +182,7 @@ export default function CheckoutPage() {
     }
   };
 
-  const handleCancel = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCancel = () => {
     router.push('/mycart');
   };
 
@@ -239,7 +239,7 @@ export default function CheckoutPage() {
           <p className="text-gray-600 mb-4">You can cancel this order within the next {cancelTimeLeft} seconds.</p>
           <div className="flex justify-center gap-4">
             <button
-              onClick={handleCancelOrder}
+              onClick={() => handleCancelOrder()}
               disabled={cancelTimeLeft === 0}
               className="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
