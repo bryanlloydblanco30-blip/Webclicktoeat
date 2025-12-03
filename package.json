@@ -1,0 +1,9 @@
+{
+  "devDependencies": {
+    "gh-pages": "^6.3.0"
+  },
+  "dependencies": {
+    "@uploadcare/file-uploader": "^1.24.5",
+    "@uploadcare/react-uploader": "^1.11.1"
+  }
+}
