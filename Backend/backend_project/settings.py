@@ -98,8 +98,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://clicktoeat-pw67.onrender.com",
     "https://clicktoeat-frontend.onrender.com",
     "https://clicktoeat-admin.onrender.com",
-    "https://webclicktoeat-6htejj2if-bryans-projects-e4c7e470.vercel.app"
-    
+    "https://webclicktoeat-6htejj2if-bryans-projects-e4c7e470.vercel.app",
+    "https://webclicktoeat.vercel.app",
     # Vercel deployments - All current frontend/admin URLs
     "https://clickto-eat.vercel.app",  # Main frontend
     "https://clickto-laddk59ty-bryans-projects-e4c7e470.vercel.app",  # Frontend preview
@@ -141,8 +141,8 @@ CSRF_TRUSTED_ORIGINS = [
     "https://clicktoeat-pw67.onrender.com",
     "https://clicktoeat-frontend.onrender.com",
     "https://clicktoeat-admin.onrender.com",
-    "https://webclicktoeat-6htejj2if-bryans-projects-e4c7e470.vercel.app"
-    "https://webclicktoeat.vercel.app"
+    "https://webclicktoeat-6htejj2if-bryans-projects-e4c7e470.vercel.app",
+    "https://webclicktoeat.vercel.app",
     
     # Vercel deployments
     "https://clickto-eat.vercel.app",
