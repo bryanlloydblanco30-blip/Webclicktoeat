@@ -91,6 +91,8 @@ def signup_view(request):
 
 @csrf_exempt  # Add this line
 @require_http_methods(["POST"])
+@csrf_exempt
+@require_http_methods(["POST"])
 def login_view(request):
     """User login"""
     try:
@@ -105,45 +107,74 @@ def login_view(request):
         password = data.get('password')
         
         print(f"Username: {username}")
+        print(f"Password length: {len(password) if password else 0}")
         
         if not all([username, password]):
             return JsonResponse({'error': 'Username and password required'}, status=400)
         
-        # Authenticate user
+        # Check if user exists first
+        from django.contrib.auth.models import User
+        try:
+            user_obj = User.objects.get(username=username)
+            print(f"✅ User exists: ID={user_obj.id}, username={user_obj.username}")
+            print(f"✅ User is_active: {user_obj.is_active}")
+            print(f"✅ Password hash (first 50): {user_obj.password[:50]}")
+        except User.DoesNotExist:
+            print(f"❌ User '{username}' does not exist in database")
+            return JsonResponse({'error': 'Invalid credentials'}, status=401)
+        
+        # Try to authenticate
+        print("Attempting authentication...")
         user = authenticate(request, username=username, password=password)
         
         if user is not None:
+            print(f"✅ Authentication successful!")
+            print(f"✅ Authenticated user: {user.username} (ID: {user.id})")
+            
             # Login creates the session
             login(request, user)
             
             # Get user profile
-            profile = user.profile
+            try:
+                profile = user.profile
+                print(f"✅ Profile found: role={profile.role}")
+            except Exception as e:
+                print(f"⚠️ Profile error: {e}")
+                profile = None
             
-            print(f"✅ Login successful for: {username}")
-            
-            return JsonResponse({
+            response_data = {
                 'success': True,
                 'message': 'Login successful',
                 'user': {
                     'id': user.id,
                     'username': user.username,
                     'email': user.email,
-                    'role': profile.role,
-                    'food_partner': profile.food_partner,
-                    'full_name': getattr(profile, 'full_name', ''),
-                    'sr_code': getattr(profile, 'sr_code', ''),
+                    'role': profile.role if profile else 'member',
+                    'food_partner': profile.food_partner if profile else '',
+                    'full_name': getattr(profile, 'full_name', '') if profile else '',
+                    'sr_code': getattr(profile, 'sr_code', '') if profile else '',
                 }
-            })
+            }
+            
+            print(f"✅ Sending success response")
+            return JsonResponse(response_data)
+            
         else:
-            print(f"❌ Invalid credentials for: {username}")
+            print(f"❌ authenticate() returned None")
+            print(f"❌ Credentials did not match")
+            
+            # Manual check - does the password match?
+            from django.contrib.auth.hashers import check_password
+            manual_check = check_password(password, user_obj.password)
+            print(f"Manual password check: {manual_check}")
+            
             return JsonResponse({'error': 'Invalid credentials'}, status=401)
             
     except Exception as e:
-        print(f"❌ Login error: {str(e)}")
+        print(f"❌ Login exception: {str(e)}")
         import traceback
         traceback.print_exc()
         return JsonResponse({'error': str(e)}, status=500)
-
 @require_http_methods(["POST"])
 def logout_view(request):
     """User logout"""
