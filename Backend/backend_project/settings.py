@@ -94,26 +94,13 @@ LOGOUT_REDIRECT_URL = None
 
 # ==================== CORS SETTINGS ====================
 CORS_ALLOWED_ORIGINS = [
-    # Production URLs - DOMAINS ONLY, NO PATHS
+    # Production URLs
     "https://clicktoeat-pw67.onrender.com",
-    "https://clicktoeat-frontend.onrender.com",
-    "https://clicktoeat-admin.onrender.com",
-    "https://webclicktoeat-6htejj2if-bryans-projects-e4c7e470.vercel.app",
-    "https://webclicktoeat.vercel.app",
-    # Vercel deployments - All current frontend/admin URLs
-    "https://clickto-eat.vercel.app",  # Main frontend
-    "https://clickto-laddk59ty-bryans-projects-e4c7e470.vercel.app",  # Frontend preview
-    "https://clickto-eat-rxo1-ip41vktxo-bryans-projects-e4c7e470.vercel.app",  # Admin preview
-    "https://clickto-eat-rxo1.vercel.app",
-    "https://clickto-eat-rxo1-41618asb3-bryans-projects-e4c7e470.vercel.app",
-    "https://clickto-eat-rxo1-ipppgapnc-bryans-projects-e4c7e470.vercel.app",
-    "https://clickto-ekjcpfwia-bryans-projects-e4c7e470.vercel.app",
+    "https://webclicktoeat-b0dwyz8yc-bryans-projects-e4c7e470.vercel.app",  # ADD YOUR CURRENT URL
     
-    # Development URLs
+    # Development
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "http://localhost:3001",
-    "http://127.0.0.1:3001",
 ]
 
 # Allow all Vercel preview deployments (including future ones)
@@ -137,31 +124,13 @@ CORS_ALLOW_HEADERS = [
 
 # ==================== CSRF SETTINGS ====================
 CSRF_TRUSTED_ORIGINS = [
-    # Production URLs
     "https://clicktoeat-pw67.onrender.com",
-    "https://clicktoeat-frontend.onrender.com",
-    "https://clicktoeat-admin.onrender.com",
-    "https://webclicktoeat-6htejj2if-bryans-projects-e4c7e470.vercel.app",
-    "https://webclicktoeat.vercel.app",
-    
-    # Vercel deployments
-    "https://clickto-eat.vercel.app",
-    "https://clickto-laddk59ty-bryans-projects-e4c7e470.vercel.app",
-    "https://clickto-eat-rxo1-ip41vktxo-bryans-projects-e4c7e470.vercel.app",
-    "https://clickto-eat-rxo1.vercel.app",
-    "https://clickto-eat-rxo1-41618asb3-bryans-projects-e4c7e470.vercel.app",
-    "https://clickto-eat-rxo1-ipppgapnc-bryans-projects-e4c7e470.vercel.app",
-    "https://clickto-ekjcpfwia-bryans-projects-e4c7e470.vercel.app",
-    'https://*.vercel.app',
-    "https://clickto-4ukxdfnjg-bryans-projects-e4c7e470.vercel.app",
-    
-    
-    # Development URLs
+    "https://webclicktoeat-b0dwyz8yc-bryans-projects-e4c7e470.vercel.app",  # ADD YOUR CURRENT URL
+    "https://*.vercel.app",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "http://localhost:3001",
-    "http://127.0.0.1:3001",
 ]
+
 
 # ==================== SESSION AND COOKIE SETTINGS ====================
 # Cross-domain session cookie settings (required for Vercel + Render)
