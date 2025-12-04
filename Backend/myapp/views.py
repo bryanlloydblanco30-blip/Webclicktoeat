@@ -14,9 +14,82 @@ from django.views import View
 from datetime import timedelta
 from django.utils import timezone
 from .models import UserProfile
+from django.contrib.auth.hashers import check_password
+from django.core.management import call_command
+
+from django.contrib.auth.models import User
+from myapp.models import UserProfile
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+
+@csrf_exempt
+def create_users(request):
+    if request.method == 'POST':
+        try:
+            # Create Admin User
+            if not User.objects.filter(username='admin').exists():
+                admin = User.objects.create_superuser(
+                    username='admin',
+                    email='admin@clicktoeat.com',
+                    password='Admin123!'
+                )
+                UserProfile.objects.create(
+                    user=admin,
+                    role='admin',
+                    full_name='System Administrator',
+                    sr_code='ADMIN001'
+                )
+            
+            # Create Staff Users
+            partners = [
+                ('theatery', 'Theatery Food Hub', 'Theatery Owner'),
+                ('potato', 'Potato Corner', 'Potato Corner Owner'),
+                ('chowking', 'Chowking', 'Chowking Owner'),
+                ('spotg', 'SpotG', 'SpotG Owner'),
+                ('julies', 'Julies Bake Shop', 'Julies Owner'),
+                ('waffle', 'Waffle Time', 'Waffle Time Owner'),
+                ('takoyaki', 'Takoyaki', 'Takoyaki Owner'),
+                ('shawarma', 'Shawarma', 'Shawarma Owner'),
+                ('buko', 'Buko Bar', 'Buko Bar Owner'),
+                ('juice', 'Juice Hub', 'Juice Hub Owner'),
+            ]
+            
+            for username, partner_name, full_name in partners:
+                if not User.objects.filter(username=username).exists():
+                    staff = User.objects.create_user(
+                        username=username,
+                        email=f'{username}@clicktoeat.com',
+                        password='Staff123!'
+                    )
+                    UserProfile.objects.create(
+                        user=staff,
+                        role='staff',
+                        food_partner=partner_name,
+                        full_name=full_name,
+                        sr_code=''
+                    )
+            
+            return JsonResponse({
+                'message': 'Users created successfully!',
+                'admin': 'username: admin, password: Admin123!',
+                'staff': 'usernames: theatery, potato, chowking, etc. password: Staff123!'
+            })
+            
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    
+    return JsonResponse({'error': 'POST only'}, status=400)
 
 
 
+@csrf_exempt  
+def load_fixtures(request):
+    if request.method == 'POST':
+        try:
+            call_command('loaddata', 'myapp_data.json')
+            return JsonResponse({'message': 'Data loaded successfully'})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
 # ==================== AUTHENTICATION VIEWS ====================
 
 @csrf_exempt  # Add this line
@@ -164,7 +237,7 @@ def login_view(request):
             print(f"❌ Credentials did not match")
             
             # Manual check - does the password match?
-            from django.contrib.auth.hashers import check_password
+            
             manual_check = check_password(password, user_obj.password)
             print(f"Manual password check: {manual_check}")
             
