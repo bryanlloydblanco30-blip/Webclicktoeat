@@ -9,9 +9,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-lhbcm5$w39$u@&n=zx(gvr#u&+_p545kbg@x-=r=%ukr25%m+9'
 
 DEBUG = True
-
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 ALLOWED_HOSTS = ['*']
-
+DEBUG = True
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -54,13 +55,18 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend_project.wsgi.application'
 
-# Database
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL', 'sqlite:///db.sqlite3'),
-        conn_max_age=600
+        default=os.environ.get(
+            'DATABASE_URL',
+            'postgresql://neondb_owner:npg_FQYkCRLS50VW@ep-polished-leaf-a1rr006r.ap-southeast-1.aws.neon.tech:5432/neondb?sslmode=require'
+        ),
+        conn_max_age=600,
+        conn_health_checks=True,
     )
 }
+
+ALLOWED_HOSTS = ['.vercel.app', '.now.sh', '127.0.0.1', 'localhost']
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -124,7 +130,7 @@ CORS_ALLOW_HEADERS = [
 
 # ==================== CSRF SETTINGS ====================
 CSRF_TRUSTED_ORIGINS = [
-    "https://clicktoeat-pw67.onrender.com",
+    'https://webclicktoeat.vercel.app',
     "https://webclicktoeat-b0dwyz8yc-bryans-projects-e4c7e470.vercel.app",  # ADD YOUR CURRENT URL
     "https://*.vercel.app",
     "http://localhost:3000",

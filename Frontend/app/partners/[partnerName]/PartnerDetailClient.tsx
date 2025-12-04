@@ -132,12 +132,21 @@ export default function PartnerDetailClient() {
     }
   };
 
-  const handleAddToCart = async (item: MenuItem) => {
+  const handleAddToCart = async (e: React.MouseEvent, item: MenuItem) => {
+    // Stop propagation to prevent card click navigation
+    e.stopPropagation();
+    e.preventDefault();
+    
     try {
       setAddingToCart(item.id);
-      console.log('Adding item to cart:', item);
+      console.log('🛒 Adding item to cart:', item);
       
       await addToCart(item.id, 1);
+      
+      // Dispatch cart update event
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('cartUpdated'));
+      }
       
       setToastMessage(`${item.name} added!`);
       setShowToast(true);
@@ -149,6 +158,11 @@ export default function PartnerDetailClient() {
     } finally {
       setAddingToCart(null);
     }
+  };
+
+  const handleCardClick = (itemId: number) => {
+    console.log('📍 Navigating to chosen_food with ID:', itemId);
+    router.push(`/chosen_food?id=${itemId}`);
   };
 
   // Error state
@@ -323,11 +337,19 @@ export default function PartnerDetailClient() {
             {filteredItems.map((item) => (
               <div 
                 key={item.id}
-                className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 group"
+                className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 group flex flex-col"
               >
+                {/* Clickable area for navigation */}
                 <div 
-                  onClick={() => router.push(`/chosen-food?id=${item.id}`)}
-                  className="cursor-pointer"
+                  onClick={() => handleCardClick(item.id)}
+                  className="cursor-pointer flex-1 flex flex-col"
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      handleCardClick(item.id);
+                    }
+                  }}
                 >
                   <div className="relative h-48 w-full overflow-hidden bg-gray-100">
                     {item.image_url ? (
@@ -348,7 +370,7 @@ export default function PartnerDetailClient() {
                     )}
                   </div>
 
-                  <div className="p-4">
+                  <div className="p-4 flex-1 flex flex-col">
                     <h3 className="font-semibold text-lg text-gray-800 mb-1 line-clamp-1 group-hover:text-red-600 transition">
                       {item.name}
                     </h3>
@@ -356,7 +378,7 @@ export default function PartnerDetailClient() {
                       <p className="text-sm text-gray-600 mb-3 line-clamp-2">{item.description}</p>
                     )}
                     
-                    <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center justify-between mb-3 mt-auto">
                       <span className="text-xl font-bold text-red-600">₱{item.price}</span>
                       {item.category && (
                         <span className="px-3 py-1 bg-gray-100 text-gray-600 text-xs rounded-full font-medium">
@@ -367,9 +389,10 @@ export default function PartnerDetailClient() {
                   </div>
                 </div>
 
+                {/* Separate button area - not part of clickable card */}
                 <div className="px-4 pb-4">
                   <button
-                    onClick={() => handleAddToCart(item)}
+                    onClick={(e) => handleAddToCart(e, item)}
                     disabled={addingToCart === item.id}
                     className="w-full bg-red-600 text-white px-4 py-3 rounded-xl hover:bg-red-700 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-md hover:shadow-lg active:scale-95"
                   >
