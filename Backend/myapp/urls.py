@@ -48,5 +48,5 @@ urlpatterns = [
     path('api/partner/orders/<int:order_id>/status/', views.update_partner_order_status, name='partner_update_status'),
     path('api/orders/cancel/<int:order_id>/', CancelOrderView.as_view(), name='cancel_order'),
   
-    
+    path('api/load-fixtures/', views.load_fixtures, name='load_fixtures'),
 ]
