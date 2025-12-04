@@ -198,7 +198,7 @@ def check_auth(request):
 
 def get_menu_items(request):
     """Get all available menu items (public)"""
-    items = MenuItem.objects.filter(available=True)
+    items = MenuItem.objects.all()  # Changed from filter(available=True)
     data = [{
         'id': item.id,
         'name': item.name,
@@ -207,6 +207,7 @@ def get_menu_items(request):
         'image_url': item.image_url,
         'category': item.category,
         'food_partner': item.food_partner,
+        'available': item.available,  # Added this field so frontend knows status
     } for item in items]
     return JsonResponse({'items': data})
 
@@ -790,19 +791,16 @@ def get_partner_menu_items(request, partner_name):
         print(f"Decoded partner_name: {decoded_partner_name}")
         print(f"=" * 50)
         
-        # Query with the decoded name
+        # Changed from filter(food_partner=..., available=True)
         items = MenuItem.objects.filter(
-            food_partner=decoded_partner_name,
-            available=True
+            food_partner=decoded_partner_name
         )
         
         print(f"Found {items.count()} items for partner: {decoded_partner_name}")
         
         # If no items found, try to find what partners exist
         if items.count() == 0:
-            all_partners = MenuItem.objects.filter(
-                available=True
-            ).values_list('food_partner', flat=True).distinct()
+            all_partners = MenuItem.objects.values_list('food_partner', flat=True).distinct()
             print(f"Available partners in database: {list(all_partners)}")
         
         data = [{
@@ -813,6 +811,7 @@ def get_partner_menu_items(request, partner_name):
             'image_url': item.image_url,
             'category': item.category,
             'food_partner': item.food_partner,
+            'available': item.available,  # Added this
         } for item in items]
         
         print(f"Returning {len(data)} items")
