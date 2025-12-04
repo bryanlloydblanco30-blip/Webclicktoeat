@@ -22,6 +22,10 @@ from myapp.models import UserProfile
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
+from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+
 @csrf_exempt
 def create_users(request):
     if request.method == 'POST':
@@ -46,12 +50,6 @@ def create_users(request):
                 ('potato', 'Potato Corner', 'Potato Corner Owner'),
                 ('chowking', 'Chowking', 'Chowking Owner'),
                 ('spotg', 'SpotG', 'SpotG Owner'),
-                ('julies', 'Julies Bake Shop', 'Julies Owner'),
-                ('waffle', 'Waffle Time', 'Waffle Time Owner'),
-                ('takoyaki', 'Takoyaki', 'Takoyaki Owner'),
-                ('shawarma', 'Shawarma', 'Shawarma Owner'),
-                ('buko', 'Buko Bar', 'Buko Bar Owner'),
-                ('juice', 'Juice Hub', 'Juice Hub Owner'),
             ]
             
             for username, partner_name, full_name in partners:
@@ -69,27 +67,13 @@ def create_users(request):
                         sr_code=''
                     )
             
-            return JsonResponse({
-                'message': 'Users created successfully!',
-                'admin': 'username: admin, password: Admin123!',
-                'staff': 'usernames: theatery, potato, chowking, etc. password: Staff123!'
-            })
+            return JsonResponse({'message': 'Users created successfully!'})
             
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
     
     return JsonResponse({'error': 'POST only'}, status=400)
 
-
-
-@csrf_exempt  
-def load_fixtures(request):
-    if request.method == 'POST':
-        try:
-            call_command('loaddata', 'myapp_data.json')
-            return JsonResponse({'message': 'Data loaded successfully'})
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
 # ==================== AUTHENTICATION VIEWS ====================
 
 @csrf_exempt  # Add this line
